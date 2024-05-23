@@ -11,7 +11,7 @@ int main() {
     const int height = 80;
     float posY = screenHeight - height;
     */
-    const int jumpHeight = 10;
+    const int jumpHeight = 600;
     double velocity = 0;
     bool doubleJump = true;
 
@@ -19,7 +19,7 @@ int main() {
     const int fps = 60;
     
     //gravity value
-    const double gravity = 23.0/fps;
+    const double gravity = 1'000.0;
 
     //initiate window
     InitWindow(screenWidth, screenHeight, "Dapper Dasher");
@@ -36,7 +36,11 @@ int main() {
     scarfyPos.x = screenWidth/2 - scarfyRec.width/2;
     scarfyPos.y = screenHeight - scarfyRec.height;
 
+    //time since last frame
+    float dt;
+
     while(!WindowShouldClose()) {
+        dt = GetFrameTime();
         BeginDrawing();
         ClearBackground(WHITE);
 
@@ -50,8 +54,8 @@ int main() {
         }
 
         //update position and velocity of rectangle
-        scarfyPos.y += velocity;
-        velocity += gravity;
+        scarfyPos.y += velocity*dt;
+        velocity += gravity*dt;
 
         //ground check
         //stops rectangle on ground and restores double jump
