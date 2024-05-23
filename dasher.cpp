@@ -24,9 +24,19 @@ int main() {
     //initiate window
     InitWindow(screenWidth, screenHeight, "Dapper Dasher");
     SetTargetFPS(fps);
+
+    //nebula texture
+    Texture2D nebula = LoadTexture("textures/12_nebula_spritesheet.png");
+    Rectangle nebRec;
+    nebRec.width = nebula.width/8;
+    nebRec.height = nebula.height/8;
+    nebRec.x = 0;
+    nebRec.y = 0;
+    Vector2 nebPos{screenWidth, screenHeight-nebRec.height};
+    int nebVel = -600;
     
     //Scarfy texture
-    Texture2D scarfy = LoadTexture("./textures/scarfy.png");
+    Texture2D scarfy = LoadTexture("textures/scarfy.png");
     Rectangle scarfyRec;
     scarfyRec.width = scarfy.width/6;
     scarfyRec.height = scarfy.height;
@@ -38,6 +48,11 @@ int main() {
 
     //time since last frame
     float dt;
+
+    //sprite animation
+    int spriteIndex = 0;
+    float spriteTime = 0;
+    const float updateTime = 1.0/12.0;
 
     while(!WindowShouldClose()) {
         dt = GetFrameTime();
@@ -53,9 +68,12 @@ int main() {
             velocity = -jumpHeight;
         }
 
-        //update position and velocity of rectangle
+        //update position and velocity of scarfy
         scarfyPos.y += velocity*dt;
         velocity += gravity*dt;
+
+        //update position of nebula
+        nebPos.x += nebVel*dt;
 
         //ground check
         //stops rectangle on ground and restores double jump
@@ -65,11 +83,25 @@ int main() {
             doubleJump = true;
         }
         //DrawRectangle(screenWidth/2, posY, width, height, BLUE);
+        //draw scarfy
         DrawTextureRec(scarfy, scarfyRec, scarfyPos, WHITE);
+        
+        //draw nebula
+        DrawTextureRec(nebula, nebRec, nebPos, WHITE);
+
+        spriteTime += dt;
+        if(spriteTime >= updateTime) {
+            spriteIndex++;
+            spriteIndex %= 6;
+            scarfyRec.x = scarfyRec.width*spriteIndex;
+            spriteTime = 0;
+
+        }
 
         EndDrawing();
     }
 
     UnloadTexture(scarfy);
+    UnloadTexture(nebula);
     CloseWindow();
 }
